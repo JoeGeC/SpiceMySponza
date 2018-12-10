@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <memory>
+#include <map>
 
 class MyView : public tygra::WindowViewDelegate
 {
@@ -62,7 +63,16 @@ private:
 	// a container of these mesh e.g.
 	std::vector<MeshGL> m_meshVector;
 
+	struct MaterialData
+	{
+		GLuint id{ 0 };
+		std::string fileName;
+		bool hasDiffuse{ false };
+		bool hadSpecular{ false };
+	};
+
 	std::vector<std::string> m_texVector;
+	std::map<sponza::MaterialId, MaterialData> m_texMap;
 
 	void createBuffer(GLuint &vbo, GLenum target, GLsizeiptr size, const void *data);
 	void bindBuffer(GLuint &vbo, GLenum target, GLuint index, GLint isize, GLsizeiptr size);
