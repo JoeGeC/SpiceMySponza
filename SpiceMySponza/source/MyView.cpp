@@ -220,47 +220,6 @@ void MyView::windowViewRender(tygra::Window * window)
 	GLuint camPosId = glGetUniformLocation(shader_program_, "camPos");
 	glUniform3fv(camPosId, 1, glm::value_ptr(camera_pos));
 
-	const auto& all_materials = scene_->getAllMaterials();
-	for (const auto& mat : all_materials)
-	{
-		if(std::find(m_texVector.begin(), m_texVector.end(), mat.getDiffuseTexture()) == m_texVector.end())
-			m_texVector.push_back(mat.getDiffuseTexture());
-		if (std::find(m_texVector.begin(), m_texVector.end(), mat.getSpecularTexture()) == m_texVector.end())
-			m_texVector.push_back(mat.getSpecularTexture());
-	}
-
-	for (auto& tex : m_texVector)
-	{
-		std::string fileName = "resource::///" + tex;
-		GLuint texId = 0;
-
-		tygra::Image texture_image = tygra::createImageFromPngFile(fileName);
-		
-		if (texture_image.doesContainData())
-		{
-			glGenTextures(1, &texId);
-			glBindTexture(GL_TEXTURE_2D, texId);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-				GL_LINEAR_MIPMAP_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			GLenum pixel_formats[] = { 0, GL_RED, GL_RG, GL_RGB, GL_RGBA };
-			glTexImage2D(GL_TEXTURE_2D,
-				0,
-				GL_RGBA,
-				texture_image.width(),
-				texture_image.height(),
-				0,
-				pixel_formats[texture_image.componentsPerPixel()],
-				texture_image.bytesPerComponent() == 1
-				? GL_UNSIGNED_BYTE : GL_UNSIGNED_SHORT,
-				texture_image.pixelData());
-			glGenerateMipmap(GL_TEXTURE_2D);
-			glBindTexture(GL_TEXTURE_2D, kNullId);
-		}
-	}
-
 	// Render each mesh
 	// Loop through your mesh container e.g.
 	for (const auto& mesh : m_meshVector)
